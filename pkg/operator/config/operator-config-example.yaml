@@ -43,3 +43,9 @@ bls_private_key_store_path: <path-to>/test.bls.key.json
 
 # Chain ID: 1 for mainnet, 5 for Goerli, 17000 for holesky, 31337 for local
 chain_id: 5
+
+# logo_url: enter your logo, you must enter it as a link.
+logo: "https://raw.githubusercontent.com/<your-username>/eigenlayer-cli/master/logo.png"
+
+# twitter_url: enter your twitter link, you must enter it as a link.
+twitter: "https://twitter.com/yourusername"
