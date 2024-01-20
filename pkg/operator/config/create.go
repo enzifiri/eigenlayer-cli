@@ -53,7 +53,10 @@ func CreateCmd(p utils.Prompter) *cli.Command {
 				return err
 			}
 
-			metadata := eigensdkTypes.OperatorMetadata{}
+			metadata := eigensdkTypes.OperatorMetadata{
+				Logo:    op.Logo,
+				Twitter: op.Twitter,
+			}
 			jsonData, err := json.MarshalIndent(metadata, "", "  ")
 			if err != nil {
 				return err
@@ -93,35 +96,6 @@ func promptOperatorInfo(config *types.OperatorConfig, p utils.Prompter) (types.O
 	}
 	config.Operator.Address = operatorAddress
 
-	// TODO(madhur): Disabling this for now as the feature doesn't work but
-	// we need to keep the code around for future
-	// Prompt to gate stakers approval
-	//gateApproval, err := p.Confirm("Do you want to gate stakers approval?")
-	//if err != nil {
-	//	return types.OperatorConfig{}, err
-	//}
-	// Prompt for address if operator wants to gate approvals
-	//if gateApproval {
-	//	delegationApprover, err := p.InputString("Enter your staker approver address:", "", "",
-	//		func(s string) error {
-	//			isValidAddress := eigenSdkUtils.IsValidEthereumAddress(s)
-	//
-	//			if !isValidAddress {
-	//				return errors.New("address is invalid")
-	//			}
-	//
-	//			return nil
-	//		},
-	//	)
-	//	if err != nil {
-	//		return types.OperatorConfig{}, err
-	//	}
-	//	config.Operator.DelegationApproverAddress = delegationApprover
-	//} else {
-	//	config.Operator.DelegationApproverAddress = eigensdkTypes.ZeroAddress
-	//}
-
-	// TODO(madhur): Remove this once we have the feature working and want to prompt users for this address
 	config.Operator.DelegationApproverAddress = eigensdkTypes.ZeroAddress
 
 	// Prompt and set earnings address
@@ -183,6 +157,32 @@ func promptOperatorInfo(config *types.OperatorConfig, p utils.Prompter) (types.O
 	}
 
 	config.SignerType = types.LocalKeystoreSigner
+
+	// Prompt for logo URL
+	logoURL, err := p.InputString("Enter your logo URL:", "", "",
+		func(s string) error {
+			// Burada logo URL'nin geçerli olup olmadığını kontrol edebilirsin.
+			// Örneğin, boş bir URL kabul etmemesi için kontrol ekleyebilirsin.
+			return nil
+		},
+	)
+	if err != nil {
+		return types.OperatorConfig{}, err
+	}
+	config.Logo = logoURL
+
+	// Prompt for Twitter URL
+	twitterURL, err := p.InputString("Enter your Twitter URL:", "", "",
+		func(s string) error {
+			// Burada Twitter URL'nin geçerli olup olmadığını kontrol edebilirsin.
+			// Örneğin, boş bir URL kabul etmemesi için kontrol ekleyebilirsin.
+			return nil
+		},
+	)
+	if err != nil {
+		return types.OperatorConfig{}, err
+	}
+	config.Twitter = twitterURL
 
 	return *config, nil
 }
