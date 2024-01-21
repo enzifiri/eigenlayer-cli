@@ -43,3 +43,7 @@ bls_private_key_store_path: <path-to>/test.bls.key.json
 
 # Chain ID: 1 for mainnet, 5 for Goerli, 17000 for holesky, 31337 for local
 chain_id: 5
+
+logo:
+
+twitter:
