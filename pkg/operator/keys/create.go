@@ -29,7 +29,6 @@ const (
 )
 
 func CreateCmd(p utils.Prompter) *cli.Command {
-
 	createCmd := &cli.Command{
 		Name:      "create",
 		Usage:     "Used to create encrypted keys in local keystore",
@@ -119,6 +118,18 @@ func saveBlsKey(keyName string, p utils.Prompter, keyPair *bls.KeyPair, insecure
 		return err
 	}
 
+	_, err = p.InputHiddenString("Please confirm your password:", "",
+		func(s string) error {
+			if s != password {
+				return errors.New("passwords are not matched")
+			}
+			return nil
+		},
+	)
+	if err != nil {
+		return err
+	}
+
 	err = keyPair.SaveToFile(fileLoc, password)
 	if err != nil {
 		return err
@@ -155,6 +166,19 @@ func saveEcdsaKey(keyName string, p utils.Prompter, privateKey *ecdsa.PrivateKey
 		return err
 	}
 
+	_, err = p.InputHiddenString("Please confirm your password:", "",
+
+		func(s string) error {
+			if s != password {
+				return errors.New("passwords are not matched")
+			}
+			return nil
+		},
+	)
+	if err != nil {
+		return err
+	}
+
 	err = sdkEcdsa.WriteKey(fileLoc, privateKey, password)
 	if err != nil {
 		return err
@@ -163,8 +187,7 @@ func saveEcdsaKey(keyName string, p utils.Prompter, privateKey *ecdsa.PrivateKey
 	privateKeyHex := hex.EncodeToString(privateKey.D.Bytes())
 	// TODO: display it using `less` of `vi` so that it is not saved in terminal history
 	fmt.Println("ECDSA Private Key (Hex): ", privateKeyHex)
-	fmt.Println("Please backup the above private key hex in safe place.")
-	fmt.Println()
+	fmt.Println("\033[1;32m🔐 Please backup the above private key hex in a safe place 🔒\033[0m")
 	fmt.Println("Key location: " + fileLoc)
 	publicKey := privateKey.Public()
 	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
